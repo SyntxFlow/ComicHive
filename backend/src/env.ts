@@ -1,12 +1,7 @@
 const ENV = {
   DATABASE_URL: process.env.DATABASE_URL,
 
-  MIX_PREFIX_AUTH_ROUTE_PARAM: 'assets/',
-  MIX_AUTH_ROUTE_PARAM: 'MY3xlarHhSHQMLK.txt',
-  MIX_AUTH_KEY: 'nvF8wVgEpPNczKF',
-  MIX_AUTH_TOKEN: 'ukoBYXnjNRGFKAW',
-  MIX_PAGE_TOKEN_KEY: 'HXyUnBIulq5VH9J',
-  MIX_STREAM_SERVER_KEY: 'KEbmu4JamzJRCsd',
+  MIX_PREFIX_AUTH_ROUTE_PARAM: 'assets/'
 }
 
 export default ENV;

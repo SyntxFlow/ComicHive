@@ -269,6 +269,14 @@ Proyek ini pakai MIT License. Cek [LICENSE](./LICENSE) buat detailnya.
 
 ---
 
+## Contributor 
+
+<a href="https://github.com/SyntxFlow/Finime/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=SyntxFlow/Finime" />
+</a>
+
+---
+
 **Selamat ngoding** 🚀
 Punya ide fitur baru atau nemu bug? Langsung aja buka issue atau submit PR, jangan malu-malu!
 

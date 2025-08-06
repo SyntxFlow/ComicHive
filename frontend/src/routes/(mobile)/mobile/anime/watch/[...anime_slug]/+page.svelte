@@ -17,8 +17,7 @@
 	const QUALITY = {
 		"360": 0,
 		"480": 1,
-		"720": 2,
-		"1080": 3,
+		"720": 2
 	}
 
 	let animeDetail: IAnimeEpisodeDetail;
@@ -53,22 +52,22 @@
 				],
 				quality: {
 					default: 360,
-					options: [360, 480, 720, 1080],
+					options: [360, 480, 720],
 					forced: true,
-					// onChange(quality) {
-					// 	console.log('Quality changed to:', quality);
-					// 	console.log(animeDetail?.videoUrls.length - ((QUALITY as any)[quality]))
-					// 	const currentTime = (playerElement as HTMLVideoElement).currentTime;
-					// 	const isPaused = (playerElement as HTMLVideoElement).paused;
+					onChange(quality) {
+						console.log('Quality changed to:', quality);
+						console.log(animeDetail?.videoUrls.length - ((QUALITY as any)[quality]))
+						const currentTime = (playerElement as HTMLVideoElement).currentTime;
+						const isPaused = (playerElement as HTMLVideoElement).paused;
 
-					// 	(playerElement as HTMLVideoElement).src = animeDetail?.videoUrls[animeDetail?.videoUrls.length - ((QUALITY as any)[quality])];
+						(playerElement as HTMLVideoElement).src = animeDetail?.videoUrls[(animeDetail?.videoUrls.length - 1) - ((QUALITY as any)[quality])];
 
-					// 	(playerElement as HTMLVideoElement).load();
-					// 	(playerElement as HTMLVideoElement).currentTime = currentTime;
-					// 	if (!isPaused) {
-					// 		(playerElement as HTMLVideoElement).play();
-					// 	}
-					// },
+						(playerElement as HTMLVideoElement).load();
+						(playerElement as HTMLVideoElement).currentTime = currentTime;
+						if (!isPaused) {
+							(playerElement as HTMLVideoElement).play();
+						}
+					},
 				},
 			});
 			player.on('play', () => console.log('Video playing!'));
@@ -110,8 +109,8 @@
 			></iframe>
 		{/if}
 		<div class="bg-gradient-to-t from-black/90 to-transparent px-5 pb-8 pt-5">
-			<h1 class="text-2xl font-extrabold leading-tight">Tsuihousha Shokudou e Youkoso!</h1>
-			<p class="mb-4 mt-1 text-base font-normal">Episode 4</p>
+			<h1 class="text-2xl font-extrabold leading-tight">{(animeDetail?.title || "").replace("- Kuramanime", "")}</h1>
+			<p class="mb-4 mt-1 text-base font-normal">Episode {(animeDetail?.isEpisode || "-")}</p>
 			<!-- <div class="mb-3 flex flex-wrap gap-2">
 				<button
 					class="flex items-center gap-2 rounded-md bg-[#3a3a4a] px-3 py-2 text-sm font-semibold"
@@ -143,30 +142,6 @@
 					<i class="fas fa-arrow-down"> </i>
 					Download
 				</button> -->
-				<button
-					aria-label="Locked 1"
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
-				>
-					<i class="fas fa-lock"> </i>
-					1
-				</button>
-				<button
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
-				>
-					2
-				</button>
-				<button
-					aria-label="Locked 3"
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
-				>
-					<i class="fas fa-lock"> </i>
-					3
-				</button>
-				<button
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#6b6bf5] text-sm font-semibold"
-				>
-					4
-				</button>
 			</div>
 			<h2 class="mb-4 text-xl font-extrabold">Komentar</h2>
 			<form class="mb-6 flex gap-3">

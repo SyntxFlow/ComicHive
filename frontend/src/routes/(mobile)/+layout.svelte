@@ -8,11 +8,17 @@
 	import { onMount } from 'svelte';
 
   onMount(() => {
-      if (typeof window != "undefined") {
-        if ('scrollRestoration' in history) {
-          history.scrollRestoration = 'manual';
-        }
-      }
+		if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((reg) => console.log('[SW] Registered:', reg))
+        .catch((err) => console.error('[SW] Failed:', err));
+    }
+		
+		if (typeof window != "undefined") {
+			if ('scrollRestoration' in history) {
+				history.scrollRestoration = 'manual';
+			}
+		}
   });
 
 	mode.set("flat")

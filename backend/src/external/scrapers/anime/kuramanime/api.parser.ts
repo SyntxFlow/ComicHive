@@ -349,11 +349,23 @@ export class KuramanimeParser extends Scrape {
       const episodeList: { ep: string; url: string }[] = [];
       const episodePopover = $("#episodeLists").attr("data-content");
       if (episodePopover) {
+        let latestEpisode: string | null = null
         const $ep = this.cheerio.load(episodePopover);
         $ep('a').each((_, el) => {
           const ep = $ep(el).text().replace(/Ep\s*/i, '').trim();
           const url = $ep(el).attr('href') || '';
+          if (/Terlama|Terbaru/i.test(ep)) {
+            latestEpisode = ep.match(/(\d+)\s?\(Terbaru\)/i)?.[1] || null;
+            return;
+          };
           if (ep && url) episodeList.push({ ep, url });
+          if ($ep(el).hasClass("page__link__episode") && typeof latestEpisode == "string") {
+            const leps = parseInt(latestEpisode);
+            const lfirst = episodeList.length - 1;
+            for (let i = 0; i < (leps - lfirst) - 1; i++) {
+              episodeList.push({ ep: ((leps - lfirst) + i).toString(), url })
+            }
+          }
         });
       }
 

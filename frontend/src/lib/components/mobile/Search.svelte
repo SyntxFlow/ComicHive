@@ -23,16 +23,20 @@
 	let animeListElement: HTMLUListElement;
 	let lastObserved: Element | undefined;
 	let obs: IntersectionObserver;
+	let htmlInputElement: HTMLInputElement;
 
 	async function searchAnimeQuery() {
-		lastObserved = undefined;
-		first = false;
-		isLoading = true;
-		const response = await AnimeMobileClient.getSearch(query);
-		animeList = response;
-		segmentList = response.slice(0, MAX_SEGMENT);
-		$runtimeData['search.cache'] = response;
-		isLoading = false;
+		if (query || query.trim() != '') {
+			lastObserved = undefined;
+			htmlInputElement.blur();
+			first = false;
+			isLoading = true;
+			const response = await AnimeMobileClient.getSearch(query);
+			animeList = response;
+			segmentList = response.slice(0, MAX_SEGMENT);
+			$runtimeData['search.cache'] = response;
+			isLoading = false;
+		}
 	}
 
 	function handleIntersect(entries: IntersectionObserverEntry[]) {
@@ -52,6 +56,7 @@
 				0,
 				Math.min(segmentList.length + MAX_SEGMENT, animeList.length)
 			);
+			$runtimeData['search.segment'] = segmentList;
 			setTimeout(() => {
 				isLoadingInter = false;
 			}, 100);
@@ -76,12 +81,14 @@
 		if ($runtimeData['search.cache'] && $runtimeData['search.cache']?.length) {
 			first = false;
 			animeList = $runtimeData['search.cache'];
-			segmentList = animeList.slice(0, MAX_SEGMENT);
+			if ($runtimeData['search.segment'] && $runtimeData['search.segment']?.length) {
+				segmentList = $runtimeData["search.segment"];
+			}
 		}
 	});
 
 	onDestroy(() => {
-		obs.disconnect();
+		if (obs) obs.disconnect();
 	});
 </script>
 
@@ -107,6 +114,8 @@
 				class="bg-dark h-auto w-full rounded-2xl border border-white/10 p-2 pl-12 outline-none"
 				type="text"
 				bind:value={query}
+				bind:this={htmlInputElement}
+				required
 				on:keydown={(e) => {
 					if (e.key == 'Enter' && !isLoading) searchAnimeQuery();
 				}}
@@ -207,10 +216,10 @@
 											<span class="text-red-500">{anime.rating}</span>
 										</div>
 										<div
-											class="text-label-small mt-1 flex flex-nowrap items-center gap-3 overflow-x-auto"
+											class="text-label-small mt-1 flex flex-nowrap no-scroll items-center gap-3 overflow-x-auto"
 										>
 											{#each anime?.genres || [] as genre}
-												<span class="rounded-md bg-red-500 px-2 py-1 text-white">{genre.label}</span
+												<span class="rounded-md bg-red-500 px-2 py-1 text-white whitespace-nowrap">{genre.label}</span
 												>
 											{/each}
 										</div>

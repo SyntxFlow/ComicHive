@@ -42,7 +42,7 @@ const app = new Elysia()
   .get("/", () => {
     return {
       message: "Service active.",
-      source: "Finime"
+      source: "Finime, Kuramanime, Otakudesu, MyAnimeList, Komi-Komi, AnimeLovers, AnimePlay"
     }
   })
 

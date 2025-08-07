@@ -1,39 +1,140 @@
 <script lang="ts">
 	import type { IAnimeSlug } from './+page';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { Star, Shield, VerifiedIcon, SendHorizonal } from '@lucide/svelte';
 	import { scale } from 'svelte/transition';
+	import Plyr from "plyr";
+	import 'plyr/dist/plyr.css';
 
 	import { AnimeMobileClient } from '$lib/api/clients/mobile/animeClient';
 	import type { IAnimeEpisodeDetail } from '$lib/api/types/mobile/episodeType';
+	import { runtimeMobile } from '$lib/stores/runtime';
 
 	import LoadingElements from '$lib/components/ui/LoadingElements.svelte';
-	import CustomVideoPlayer from '$lib/components/complex/CustomVideoPlayer.svelte';
 
 	export let data: IAnimeSlug;
 
+	const QUALITY = {
+		"360": 0,
+		"480": 1,
+		"720": 2
+	}
+
 	let animeDetail: IAnimeEpisodeDetail;
 	let isLoading = true;
+	let player: Plyr;
+
+	let playerElement: HTMLElement;
+
+	function lockLandscape() {
+		if (screen.orientation && (screen.orientation as any).lock) {
+			(screen.orientation as any).lock('landscape-primary').catch(() => {});
+		}
+	}
+
+	function unlockOrientation() {
+		if (screen.orientation && screen.orientation.unlock) {
+			screen.orientation.unlock();
+		}
+	}
 
 	onMount(async () => {
-		console.log(data.animeSlug);
 		isLoading = true;
-		const response = await AnimeMobileClient.getEpisode(data.animeSlug);
-		animeDetail = response;
-		// console.log(response);
+		if ($runtimeMobile["episode.detail." + data.animeSlug] && typeof $runtimeMobile["episode.detail." + data.animeSlug] == "object") {
+			animeDetail = $runtimeMobile["episode.detail." + data.animeSlug]
+		} else {
+			const response = await AnimeMobileClient.getEpisode(data.animeSlug);
+			animeDetail = response;
+			$runtimeMobile["episode.detail." + data.animeSlug] = response;
+		}
 		isLoading = false;
+
+		setTimeout(() => {
+			// console.log(animeDetail?.videoUrls[animeDetail?.videoUrls?.length - 1]);
+
+			player = new Plyr(playerElement, { controls: [
+					'play-large', // The large play button in the center
+					'rewind', // Rewind by the seek time (default 10 seconds)
+					'play', // Play/pause playback
+					'fast-forward', // Fast forward by the seek time (default 10 seconds)
+					'progress', // The progress bar and scrubber for playback and buffering
+					'current-time', // The current time of playback
+					'duration', // The full duration of the media
+					'mute', // Toggle mute
+					'settings', // Settings menu
+					'airplay', // Airplay (currently Safari only)
+					'fullscreen', // Toggle fullscreen
+				],
+				quality: {
+					default: 360,
+					options: [360, 480, 720],
+					forced: true,
+					onChange(quality) {
+						// console.log('Quality changed to:', quality);
+						// console.log(animeDetail?.videoUrls.length - ((QUALITY as any)[quality]))
+						const currentTime = (playerElement as HTMLVideoElement).currentTime;
+						const isPaused = (playerElement as HTMLVideoElement).paused;
+
+						(playerElement as HTMLVideoElement).src = animeDetail?.videoUrls[(animeDetail?.videoUrls.length - 1) - ((QUALITY as any)[quality])];
+
+						(playerElement as HTMLVideoElement).load();
+						(playerElement as HTMLVideoElement).currentTime = currentTime;
+						if (!isPaused) {
+							(playerElement as HTMLVideoElement).play();
+						}
+					},
+				},
+			});
+
+			player.on('enterfullscreen', lockLandscape);
+
+			player.on('exitfullscreen', unlockOrientation);
+
+		}, 10)
+
 	});
+
+	onDestroy(() => {
+    player.off('enterfullscreen', lockLandscape);
+    player.off('exitfullscreen', unlockOrientation);
+
+    player.destroy();
+  });
 </script>
 
 {#if isLoading}
 	<LoadingElements />
 {:else}
 	<div class="mx-auto max-w-md pb-20 text-white" in:scale={{ duration: 200, start: 0.95 }}>
-		<CustomVideoPlayer videoUrl={animeDetail?.videoUrls[animeDetail?.videoUrls?.length - 1]} />
+		{#if Array.isArray(animeDetail?.videoUrls) && animeDetail?.videoUrls.length > 0}
+			<!-- <CustomVideoPlayer videoUrl={animeDetail?.videoUrls[animeDetail?.videoUrls?.length - 1]} /> -->
+
+			<div class="container">
+				<video bind:this={playerElement} src={animeDetail?.videoUrls[animeDetail?.videoUrls?.length - 1]} controls crossorigin="anonymous" playsinline poster="/images/finime-poster.png">
+					{#each animeDetail?.videoUrls as videoUrl}
+						<source src={videoUrl} type="video/mp4" />
+					{/each}
+						
+						<track kind="captions">
+
+						<a href={animeDetail?.videoUrls[animeDetail?.videoUrls?.length - 1]} download>Download</a>
+				</video>
+			</div>
+		{:else}
+			<iframe
+				class="w-full aspect-video"
+				src={animeDetail?.videoUrls as string}
+				frameborder="0"
+				allowfullscreen
+				allow="autoplay; encrypted-media; picture-in-picture"
+				loading="lazy"
+				title="Anime Video Player"
+			></iframe>
+		{/if}
 		<div class="bg-gradient-to-t from-black/90 to-transparent px-5 pb-8 pt-5">
-			<h1 class="text-2xl font-extrabold leading-tight">Tsuihousha Shokudou e Youkoso!</h1>
-			<p class="mb-4 mt-1 text-base font-normal">Episode 4</p>
-			<div class="mb-3 flex flex-wrap gap-2">
+			<h1 class="text-title-medium opacity-70 font-extrabold leading-tight">{(animeDetail?.title || "").replace("- Kuramanime", "")}</h1>
+			<p class="mb-4 mt-1 text-base font-normal">Episode {(animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "-"}</p>
+			<!-- <div class="mb-3 flex flex-wrap gap-2">
 				<button
 					class="flex items-center gap-2 rounded-md bg-[#3a3a4a] px-3 py-2 text-sm font-semibold"
 				>
@@ -56,37 +157,18 @@
 				<button class="rounded-md bg-[#3a3a4a] px-4 py-2 text-sm font-semibold">
 					Ganti Server
 				</button>
-			</div>
+			</div> -->
 			<div class="mb-6 flex flex-wrap gap-3">
-				<button
+				<!-- <button
 					class="flex items-center gap-2 rounded-md bg-[#3a3a4a] px-4 py-2 text-sm font-semibold"
 				>
 					<i class="fas fa-arrow-down"> </i>
 					Download
-				</button>
+				</button> -->
 				<button
-					aria-label="Locked 1"
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
+					class="flex items-center gap-2 rounded-md bg-[#3a3a4a] px-4 py-2 text-sm font-semibold"
 				>
-					<i class="fas fa-lock"> </i>
 					1
-				</button>
-				<button
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
-				>
-					2
-				</button>
-				<button
-					aria-label="Locked 3"
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#3a3a4a] text-sm font-semibold"
-				>
-					<i class="fas fa-lock"> </i>
-					3
-				</button>
-				<button
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-[#6b6bf5] text-sm font-semibold"
-				>
-					4
 				</button>
 			</div>
 			<h2 class="mb-4 text-xl font-extrabold">Komentar</h2>

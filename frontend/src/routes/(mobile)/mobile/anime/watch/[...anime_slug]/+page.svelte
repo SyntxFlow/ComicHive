@@ -89,6 +89,9 @@
 
 	async function fetchAllData() {
 		isLoading = true;
+		if (playerElement) {
+		  (playerElement as HTMLVideoElement).pause();
+		}
 		if ($runtimeMobile["episode.detail." + data.animeSlug] && typeof $runtimeMobile["episode.detail." + data.animeSlug] == "object") {
 			animeDetail = $runtimeMobile["episode.detail." + data.animeSlug]
 		} else {
@@ -303,7 +306,7 @@
 	{/if}
 	<div class="bg-gradient-to-t from-black/90 to-transparent px-5 pb-8 pt-5">
 		<h1 class="text-title-medium opacity-70 font-extrabold leading-tight">{(animeDetail?.title || "").replace("- Kuramanime", "")}</h1>
-		<p class="mb-4 mt-1 text-base font-normal">Episode {parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "0") || "-"}</p>
+		<p class="mb-4 mt-1 text-base font-normal">Episode {parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") || "1"}</p>
 		<!-- <div class="mb-3 flex flex-wrap gap-2">
 			<button
 				class="flex items-center gap-2 rounded-md bg-[#3a3a4a] px-3 py-2 text-sm font-semibold"
@@ -340,7 +343,7 @@
 					on:click={() => {
 						goto(`/mobile/anime/watch/${animeSlug}/${episode.ep}`, { replaceState: true });
 					}}
-					class="flex {parseInt(episode.ep) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "0") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
+					class="flex {parseInt(episode.ep) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
 				>
 					Eps {episode.ep}
 				</button>

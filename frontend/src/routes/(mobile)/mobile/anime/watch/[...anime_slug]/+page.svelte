@@ -89,9 +89,6 @@
 
 	async function fetchAllData() {
 		isLoading = true;
-		if (playerElement) {
-		  (playerElement as HTMLVideoElement).pause();
-		}
 		if ($runtimeMobile["episode.detail." + data.animeSlug] && typeof $runtimeMobile["episode.detail." + data.animeSlug] == "object") {
 			animeDetail = $runtimeMobile["episode.detail." + data.animeSlug]
 		} else {
@@ -338,14 +335,14 @@
 				<i class="fas fa-arrow-down"> </i>
 				Download
 			</button> -->
-			{#each animeDetail2?.episodeList || [] as episode}
+			{#each animeDetail2?.episodeList || [] as episode, i (i)}
 				<button
 					on:click={() => {
-						goto(`/mobile/anime/watch/${animeSlug}/${episode.ep}`, { replaceState: true });
+						goto(`/mobile/anime/watch/${animeSlug}/${i}`, { replaceState: true });
 					}}
-					class="flex {parseInt(episode.ep) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
+					class="flex {parseInt(i) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
 				>
-					Eps {episode.ep}
+					Eps {i}
 				</button>
 			{/each}
 		</div>

@@ -338,11 +338,11 @@
 			{#each animeDetail2?.episodeList || [] as episode, i (i)}
 				<button
 					on:click={() => {
-						goto(`/mobile/anime/watch/${animeSlug}/${i}`, { replaceState: true });
+						goto(`/mobile/anime/watch/${animeSlug}/${i+1}`, { replaceState: true });
 					}}
-					class="flex {parseInt(i) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
+					class="flex {parseInt(i+1) == parseInt((animeDetail?.title || "-").match(/\(\w+\s?([0-9]+)\)/i)?.[1] || "1") ? "bg-red-500" : "bg-[#3a3a4a]"} cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
 				>
-					Eps {i}
+					Eps {i+1}
 				</button>
 			{/each}
 		</div>

@@ -1,8 +1,17 @@
-![Home Page](.github/readme-images/home.png)
-
 # <img src="https://media.tenor.com/7hiQYhUQY2QAAAAM/dis.gif" alt="ComicHive Logo" width="30"/> Finime
 
 > **Finime** — Tempat asik buat streaming Anime & Manga gratis, dengan UI yang modern, tanpa iklan, tanpa ribet, dan pastinya open-source. Cocok buat kamu yang suka ngulik atau sekedar nonton santai! 🚀
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white)
+![ElysiaJS](https://img.shields.io/badge/ElysiaJS-48C78E?style=for-the-badge&logoColor=white&labelColor=000000)
+![Svelte](https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![Uploader](https://img.shields.io/badge/@zanixongroup/uploader-FF69B4?style=for-the-badge&logo=upload&logoColor=white)
+![Open Source](https://img.shields.io/badge/Open--Source-%E2%9D%A4-333333?style=for-the-badge&logo=github&logoColor=white)
 
 ---
 

@@ -12,7 +12,7 @@
 	import Maintenance from '$lib/components/ui/Maintenance.svelte';
 
 	const user = page.data?.user;
-	const serverStatus = page.data?.serverStatus;
+	const serverStatus = page.data?.serverStatus || "active";
 
 	let interval: NodeJS.Timeout;
 

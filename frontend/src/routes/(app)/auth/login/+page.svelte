@@ -42,7 +42,7 @@
         });
       }, 1000);
     } catch (error) {
-      toast.error("Gagal login", toastOption);
+      toast.error("Username atau password salah", toastOption);
     } finally {
       isLoading = false;
     }

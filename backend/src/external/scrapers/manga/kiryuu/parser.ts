@@ -1,6 +1,8 @@
 import { Scrape } from "@external/scrapers/scrape.js";
+import FormData from "form-data";
 
 import type { MangaData, ScrapedData } from "./genre.model.js";
+import type { ISearchModel, All } from "./search.model.js";
 
 export class KiryuuParser extends Scrape {
 
@@ -228,6 +230,23 @@ export class KiryuuParser extends Scrape {
       return {
         manga: mangaList
       };
+    })
+  }
+
+  static async search(query: string) {
+    let data = new FormData();
+    data.append('action', 'ts_ac_do_search');
+    data.append('ts_ac_query', query);
+
+    return await this.apiParser<ISearchModel, All[]>({
+      url: this.baseUrl + "/wp-admin/admin-ajax.php",
+      initial: [],
+      method: "POST",
+      body: data,
+      headers: data.getHeaders(),
+      cf: false
+    }, async (response, data) => {
+      return response.series?.[0]?.all || [];
     })
   }
 

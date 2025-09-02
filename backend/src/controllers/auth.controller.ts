@@ -28,7 +28,7 @@ export class AuthController {
   static async login(context: Context): Promise<ResponseModel<{ message?: string, token: string | null } | ZodIssue[]>> {
     const payload: LoginUserRequest = (context.body as LoginUserRequest);
     const response = await AuthService.login(payload);
-
+    
     if (response.status !== 200) {
       return HttpException.standarException(response.status, response.error as { message?: string, token: string | null } | ZodIssue[]);
     }
